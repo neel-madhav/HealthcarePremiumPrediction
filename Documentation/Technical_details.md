@@ -33,8 +33,51 @@ df.isnull().sum()
 ```
 This will provide NA statistics for each columns of data frame.
 
-We will drop na values as our whole data size is of 50000 records out of which maximum 15 rows have na value. So in this case we will remove those data. ```dropna()``` function will be used to drop all na values in the dataframe. 
+We will drop na values as our whole data size is of 50000 records out of which maximum 15 rows have na value. So in this case we will remove those data. ```dropna()``` function will be used to drop all na values in the dataframe. Based on different requirement we can use mean, median, mode as well.
 ```python
 df = df.dropna()
 ```
+
+To check duplicated rows 
+```python
+df = df.duplicated.sum()
+df = df.drop_duplicates()
+```
+To get quick statistics for our data frame
+```python
+df.describe()
+```
+|index|age|number\_of\_dependants|income\_lakhs|annual\_premium\_amount|
+|---|---|---|---|---|
+|count|49976\.0|49976\.0|49976\.0|49976\.0|
+|mean|34\.59176404674243|1\.711841684008324|23\.021150152072995|15766\.810188890668|
+|std|15\.000377630784854|1\.4981945585589727|24\.221794329612134|8419\.995270538298|
+|min|18\.0|-3\.0|1\.0|3501\.0|
+|25%|22\.0|0\.0|7\.0|8607\.75|
+|50%|31\.0|2\.0|17\.0|13928\.0|
+|75%|45\.0|3\.0|31\.0|22273\.5|
+|max|356\.0|5\.0|930\.0|43471\.0|
+
+### Analysis 
+Based on statistics we can alnalyse that we have outliers. Maximum value for Age is 350 which is an outlier. In number of dependents th minmum value is -3 which is incorrect data. In income lakhs maximum value is 930 Lakhs with mean value as 23 Lakh. So this is an outlier
+
+#### Number of Dependents
+To check number of rows with negative value and unique value
+```python
+df[df.number_of_dependants < 0].shape
+df[df.number_of_dependants < 0]['number_of_dependants'].unique()
+```
+Here we are taking an assumption that negative values for number of dependents can be an error. As there are 72 rows with negative value dropping these rows are not adivsable. We are replacing negative values with positive values as its not possible for number of dependents to be negaive.
+```python
+df['number_of_dependants'] = df['number_of_dependants'].abs()
+```
+#### Age
+This column have outliers. To visulaize outliers box plot is preffered. 
+```python
+sns.boxplot(x = df['age'])
+plt.show()
+```
+
+
+
 

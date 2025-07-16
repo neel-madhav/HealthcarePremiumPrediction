@@ -6,7 +6,7 @@ This project develops a predictive model to estimate health care insurance premi
 2. Deploy the model in cloud.
 3. Create an interactive streamlit application.
 
-## Data Collection and Cleaning
+## Data Collection, Cleaning and Exploratory Data Analysis (EDA)
 
 We have data in xlsx format. To read the data from xlsx format we used pandas library `read_excel()`. To analyse data we want to look for number of columns and their value. That's why used `head()` function to display all columns and 5 rows.
 ```python
@@ -58,7 +58,7 @@ df.describe()
 |75%|45\.0|3\.0|31\.0|22273\.5|
 |max|356\.0|5\.0|930\.0|43471\.0|
 
-### Analysis 
+### Numeric data Analysis 
 Based on statistics we can alnalyse that we have outliers. Maximum value for Age is 350 which is an outlier. In number of dependents th minmum value is -3 which is incorrect data. In income lakhs maximum value is 930 Lakhs with mean value as 23 Lakh. So this is an outlier
 
 #### Number of Dependents
@@ -77,7 +77,96 @@ This column have outliers. To visulaize outliers box plot is preffered.
 sns.boxplot(x = df['age'])
 plt.show()
 ```
-![Model Architecture](Documentation/Images/BoxPlotAge.png)
+![Model Architecture](Images/BoxPlotAge.png)
+
+
+To Display box plot for all numeric columns 
+```python
+numeric_columns = df.select_dtypes(['float64', 'int64']).columns
+for col in numeric_columns:
+  sns.boxplot(x = df[col])
+  plt.show()
+```
+Based on box plot age above 100 is outlier
+```python
+df = df[df.age < 100].copy()
+```
+#### Income Lakhs
+The Interquartile Range (IQR) method is a common statistical technique to detect and remove outliers from a dataset.
+Calculate the 1st Quartile (Q1) — 25th percentile
+Calculate the 3rd Quartile (Q3) — 75th percentile
+
+Compute the IQR: IQR=Q3−Q1
+Determine the outlier bounds:
+
+Lower Bound = Q1−1.5×IQR
+Upper Bound = Q3+1.5×IQR
+Values below the lower bound or above the upper bound are outliers.
+```python
+def get_iqr_bounds(col):
+  Q1, Q3 = col.quantile([0.25, 0.75])
+  IQR = Q3-Q1
+  lower_bound = Q1 - 1.5*IQR
+  upper_bound = Q3 + 1.5*IQR
+  return lower_bound, upper_bound
+get_iqr_bounds(df.income_lakhs)
+```
+Other way to find outliers is by using quantile
+```python
+df.income_lakhs.quantile([0.25, 0.75])
+df.income_lakhs.quantile(.999)
+df = df[df.income_lakhs < 100]
+```
+We will plot distribution using histogram for all numeric columns for analysis. This will give us understanding what type of data we have like right skewed, left skewed, normal distribution, uniform distriburtion etc.
+We have four numeric data Age, number of dependents, income lakhs, annual premium amount. We can display histogram of all four columns in 2x2 format. 
+We will create 4 sub plots ```plt.subplots(()``` with 2 rows and 2 columns ```nrows=2, ncols=2```. We will have figure size 12inches as width and 8 inches as height ```figsize()```. ```fig``` is entire figure and ```axes``` is 2x2 array of individual figure
+```python
+fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(12, 8))  # 2 rows × 2 columns
+```
+```flatten()``` converts 2D array to 1D array. This makes it easier to loop through with ```axes[i]```
+```python
+axes = axes.flatten()
+```
+For looping through 4 columns we use ```enumerate()```. It gives both index and columns name
+```python
+for i, col in enumerate(numeric_columns[:4]):
+```
+
+We used seaborn ```histplot()``` for plotting histogram. ```kde=True``` adds kernel density estimate over histogram. ```ax=axes[i]``` draws the plot in correct subplot. To prevent label/title overlap ```tight_layout()``` is used.
+```python
+sns.histplot(x=df[col], kde=True, ax=axes[i])
+plt.tight_layout()
+```
+![Model Architecture](Images/histogram.png)
+
+Age, income lakhs and annual premium amount are right skewed distribution. 
+
+#### Bi-variant Analysis
+```python
+sns.scatterplot(df, x = 'age', y = 'annual_premium_amount')
+plt.show()
+```
+
+![Model Architecture](Images/scatter.png)
+
+As age increases your annual premium amount increases.
+
+### Categorical data Analysis 
+
+```python
+categorical_columns = ['gender', 'region', 'marital_status', 'bmi_category', 'smoking_status', 'employment_status', 'income_level', 'medical_history']
+for col in categorical_columns:
+  print(col, ":", df[col].unique())
+```
+To check uniquness of categorical data. Based on analysis smoking_status data has some variation
+
+```python
+df['smoking_status'] = df['smoking_status'].replace(
+    {'Smoking=0': 'No Smoking', 'Does Not Smoke': 'No Smoking', 'Not Smoking': "No Smoking"}
+)
+```
+
+
 
 
 

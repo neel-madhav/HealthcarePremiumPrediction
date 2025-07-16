@@ -1,4 +1,5 @@
-## Project Summary
+## Project Overview
+This project develops a predictive model to estimate health care insurance premiums based on Age, BMI, Medical history and smoking habits. Here we will build and deploy predictive model using streamlit application.
 
-### Data
-We are using Second Hand Cars Dataset by Mayank Patel. You can download the dataset train.csv file at : https://www.kaggle.com/datasets/mayankpatel14/second-hand-used-cars-data-set-linear-regression
+## Objective
+

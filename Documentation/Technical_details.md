@@ -77,7 +77,7 @@ This column have outliers. To visulaize outliers box plot is preffered.
 sns.boxplot(x = df['age'])
 plt.show()
 ```
-
+![Model Architecture](Documentation/Images/BoxPlotAge.png)
 
 
 

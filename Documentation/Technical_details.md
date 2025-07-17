@@ -196,8 +196,40 @@ plt.show()
 ```
 
 
-![Model Architecture](Images/EDABar.png)
+![Model Architecture](Images/EDABarPlot.png)
 
+### Bivariate Ananlysis
+
+```pandas.crosstab()``` is a very useful function to compute cross-tabulations (i.e., frequency tables) between two or more categorical variables.
+```python
+crosstab = pd.crosstab(df['income_level'], df['insurance_plan'])
+```
+|income\_level|Bronze|Gold|Silver|
+|---|---|---|---|
+|10L - 25L|5307|3880|5182|
+|25L - 40L|3683|2840|3750|
+|\<10L|12226|931|5486|
+|\> 40L|326|3593|2604|
+
+```python
+print(crosstab)
+crosstab.plot(kind = "bar", stacked = True)
+plt.title("Income Level vs Insurance Plan")
+plt.xlabel("Income Level")
+plt.ylabel("Count")
+plt.show()
+```
+
+![Model Architecture](Images/BIBar.png)
+
+```python
+sns.heatmap(crosstab, annot = True, cmap = "Blues", fmt = 'd')
+plt.show()
+```
+![Model Architecture](Images/BiHeat.png)
+
+
+# Feature Engineering
 
 
 

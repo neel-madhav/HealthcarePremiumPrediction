@@ -166,6 +166,37 @@ df['smoking_status'] = df['smoking_status'].replace(
 )
 ```
 
+To check the percentage of non-categorical data
+```python
+percentage_count = df['gender'].value_counts(normalize = True)
+```
+
+```percentage_count.index``` will give the index of gender as ```male or female```
+```percentage_count.values``` will give values of particular index
+
+For EDA we will plot bar graphs for all categorical data to visualize it.
+```python
+fig, axes = plt.subplots(3, 3, figsize=(18, 18))
+axes = axes.flatten()
+
+for ax, column in zip(axes, categorical_columns):
+    categorical_count = df[column].value_counts(normalize=True) * 100
+    sns.barplot(x=categorical_count.index, y=categorical_count.values, ax=ax)
+    ax.set_title(f'Distribution of {column}')
+    ax.set_ylabel('Percentage')
+    ax.set_xlabel(column)
+
+    # Rotate labels and align from left
+    for label in ax.get_xticklabels():
+        label.set_rotation(45)
+        label.set_ha('right')  # or 'left' or 'center', depending on your preference
+
+plt.tight_layout()
+plt.show()
+```
+
+
+![Model Architecture](Images/EDABar.png)
 
 
 
